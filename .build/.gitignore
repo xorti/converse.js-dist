@@ -1,0 +1,6 @@
+conversejs.tgz
+composer.lock
+**/*.log
+
+tmp/
+vendor/
