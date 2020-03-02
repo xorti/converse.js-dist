@@ -1,6 +1,9 @@
 name: Update dist
 
 on:
+  push:
+    branches:
+      - master
   schedule:
     # Sunday at midnight
     - cron:  '0 0 * * 0'

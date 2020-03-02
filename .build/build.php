@@ -71,14 +71,27 @@ $gitTargetWrapper->addLoggerEventSubscriber(new GitLoggerEventSubscriber($log));
 
 $gitTargetRepo = $gitTargetWrapper->workingCopy($targetFolder);
 
+$gitTargetWrapper->run(new GitCommand('fetch'));
 $listTagsCommand = new GitCommand('tag', '-l', '--sort=version:refname', 'v*');
 
 $targetTags = $gitTargetWrapper->run($listTagsCommand, $gitTargetRepo->getDirectory());
-$targetTags = explode(PHP_EOL, $targetTags);
+$targetTags = explode(PHP_EOL, trim($targetTags));
 
 $file = 'conversejs.tgz';
 
 foreach ($parsedData as $release) {
+
+    $version = $release['tag_name'];
+
+    if (in_array($version, $targetTags)) {
+        continue;
+    }
+
+    if (Comparator::lessThan($version, $since)) {
+        continue;
+    }
+
+    echo 'Detected ' . $version . PHP_EOL;
 
     if (file_exists($file)) {
       unlink($file);
@@ -89,18 +102,6 @@ foreach ($parsedData as $release) {
     }
 
     mkdir($sourceFolder, 0777, true);
-
-    $version = $release['tag_name'];
-
-    if (in_array($version, $targetTags)) {
-      continue;
-    }
-
-    if (Comparator::lessThan($version, $since)) {
-      continue;
-    }
-
-    echo 'Detected ' . $version . PHP_EOL;
 
     $wget = sprintf('wget %s -O %s', $release['download_url'], $file);
     `$wget`;
