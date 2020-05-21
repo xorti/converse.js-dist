@@ -71,7 +71,7 @@ $gitTargetWrapper->addLoggerEventSubscriber(new GitLoggerEventSubscriber($log));
 
 $gitTargetRepo = $gitTargetWrapper->workingCopy($targetFolder);
 
-$gitTargetWrapper->run(new GitCommand('fetch'));
+$gitTargetWrapper->run(new GitCommand('fetch', '--tags'));
 $listTagsCommand = new GitCommand('tag', '-l', '--sort=version:refname', 'v*');
 
 $targetTags = $gitTargetWrapper->run($listTagsCommand, $gitTargetRepo->getDirectory());
